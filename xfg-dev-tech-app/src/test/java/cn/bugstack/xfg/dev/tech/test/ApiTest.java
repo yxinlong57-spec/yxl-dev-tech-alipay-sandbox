@@ -4,8 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.domain.AlipayTradeQueryModel;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.request.AlipayTradeQueryRequest;
+import com.alipay.api.response.AlipayTradeQueryResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Before;
 import org.junit.Test;
 
 @Slf4j
@@ -28,16 +32,21 @@ public class ApiTest {
     // 字符编码格式
     public static String charset = "utf-8";
 
-    @Test
-    public void test_AliPay() throws AlipayApiException {
-        AlipayClient alipayClient = new DefaultAlipayClient(gatewayUrl,
+    private AlipayClient alipayClient;
+
+    @Before
+    public void init() {
+        this.alipayClient = new DefaultAlipayClient(gatewayUrl,
                 app_id,
                 merchant_private_key,
                 "json",
                 charset,
                 alipay_public_key,
                 sign_type);
+    }
 
+    @Test
+    public void test_aliPay_pageExecute() throws AlipayApiException {
         AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();  // 发送请求的 Request类
         request.setNotifyUrl(notify_url);
         request.setReturnUrl(return_url);
@@ -60,6 +69,20 @@ public class ApiTest {
          * </form>
          * <script>document.forms[0].submit();</script>
          */
+    }
+
+    /**
+     * 查询订单
+     */
+    @Test
+    public void test_alipay_certificateExecute() throws AlipayApiException {
+        AlipayTradeQueryRequest request = new AlipayTradeQueryRequest();
+        AlipayTradeQueryModel bizModel = new AlipayTradeQueryModel();
+        bizModel.setOutTradeNo("daniel82AAAA000032333361X03");
+        request.setBizModel(bizModel);
+
+        String body = alipayClient.certificateExecute(request).getBody();
+        log.info("测试结果：{}", body);
     }
 
 }
