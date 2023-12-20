@@ -5,9 +5,12 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.AlipayTradeQueryModel;
+import com.alipay.api.domain.AlipayTradeRefundModel;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.alipay.api.request.AlipayTradeQueryRequest;
+import com.alipay.api.request.AlipayTradeRefundRequest;
 import com.alipay.api.response.AlipayTradeQueryResponse;
+import com.alipay.api.response.AlipayTradeRefundResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,6 +86,22 @@ public class ApiTest {
 
         String body = alipayClient.certificateExecute(request).getBody();
         log.info("测试结果：{}", body);
+    }
+
+    /**
+     * 退款接口
+     */
+    @Test
+    public void test_alipay_refund() throws AlipayApiException {
+        AlipayTradeRefundRequest request =new AlipayTradeRefundRequest();
+        AlipayTradeRefundModel refundModel =new AlipayTradeRefundModel();
+        refundModel.setOutTradeNo("daniel82AAAA000032333361X03");
+        refundModel.setRefundAmount("1.00");
+        refundModel.setRefundReason("退款说明");
+        request.setBizModel(refundModel);
+
+        AlipayTradeRefundResponse execute = alipayClient.execute(request);
+        log.info("测试结果：{}", execute.isSuccess());
     }
 
 }
